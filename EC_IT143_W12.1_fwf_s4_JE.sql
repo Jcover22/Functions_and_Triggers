@@ -1,11 +1,29 @@
---Q: How to extract first name from Contact Name?
+CREATE TRIGGER trg_hello_world_last_mod ON dbo.t_hello_world
+AFTER UPDATE
+AS
 
---A: Well, here is your problem...
---CustomerName = Alejandra Camino -> Alejandra
--- Google search "How to extract first name from combined tsql stack overflow"
--- https://stackoverflow.com/questions/5145791/extracting-first-name-and-lastname
+/*****************************************************************************************************************
+NAME: dbo.trg_hello_world_last_mod
+PURPOSE: Hello World - Last Modified By Trigger
 
-SELECT t.ContactName
-      , LEFT(t.ContactName, CHARINDEX( ' ', t.ContactName + ' ') -1) AS first_name
-	  FROM dbo.t_w3_schools_customers AS t
-	  ORDER BY 1;
+MODIFICATION LOG:
+Ver    Date        Author        Description
+----- -------    ----------      -----------------------------------------------------------------------------
+1.0   7/7/2023    JESCOBAR       1. Built this script for EC IT440
+
+RUNTIME:
+1s
+
+NOTES:
+Keep track of the last modified date for each row in the table
+******************************************************************************************************************/
+
+UPDATE dbo.t_hello_world
+       SET
+	      last_modified_date = GETDATE()
+		  WHERE my_message IN
+		  (
+		     SELECT DISTINCT
+			       my_message
+				 FROM Inserted
+				 );
